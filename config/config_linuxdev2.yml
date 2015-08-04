@@ -77,7 +77,7 @@ local: &local
 s3: &s3
     <<: *common
     storage: s3
-    s3_region: us-east-1
+    s3_region: _env:AWS_REGION:us-east-1
     s3_bucket: _env:AWS_BUCKET:dockerregistry.efi.com
     boto_bucket: _env:AWS_BUCKET:dockerregistry.efi.com
     storage_path: _env:STORAGE_PATH:/registry
