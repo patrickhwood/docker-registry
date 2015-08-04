@@ -15,8 +15,8 @@ common: &common
     disable_token_auth: _env:DISABLE_TOKEN_AUTH
     # No priv key
     privileged_key: _env:PRIVILEGED_KEY
-    # No search backend
-    search_backend: _env:SEARCH_BACKEND
+    # default search backend
+    search_backend: _env:SEARCH_BACKEND:sqlalchemy
     # SQLite search backend
     sqlalchemy_index_database: _env:SQLALCHEMY_INDEX_DATABASE:sqlite:////tmp/docker-registry.db
 
@@ -77,18 +77,18 @@ local: &local
 s3: &s3
     <<: *common
     storage: s3
-    s3_region: _env:AWS_REGION
-    s3_bucket: _env:AWS_BUCKET
-    boto_bucket: _env:AWS_BUCKET
+    s3_region: us-east-1
+    s3_bucket: _env:AWS_BUCKET:dockerregistry.efi.com
+    boto_bucket: _env:AWS_BUCKET:dockerregistry.efi.com
     storage_path: _env:STORAGE_PATH:/registry
-    s3_encrypt: _env:AWS_ENCRYPT:true
-    s3_secure: _env:AWS_SECURE:true
-    s3_access_key: _env:AWS_KEY
-    s3_secret_key: _env:AWS_SECRET
+    s3_encrypt: _env:AWS_ENCRYPT:false
+    s3_secure: _env:AWS_SECURE:false
+    s3_access_key: _env:AWS_KEY:admin:admin
+    s3_secret_key: _env:AWS_SECRET:admin
     s3_use_sigv4: _env:AWS_USE_SIGV4
-    boto_host: _env:AWS_HOST
-    boto_port: _env:AWS_PORT
-    boto_calling_format: _env:AWS_CALLING_FORMAT
+    boto_host: _env:AWS_HOST:linuxdev2.efi.internal
+    boto_port: _env:AWS_PORT:8080
+    boto_calling_format: _env:AWS_CALLING_FORMAT:boto.s3.connection.OrdinaryCallingFormat
 
 cloudfronts3: &cloudfronts3
     <<: *s3
