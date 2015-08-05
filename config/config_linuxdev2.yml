@@ -87,7 +87,7 @@ s3: &s3
     s3_secret_key: _env:AWS_SECRET:admin
     s3_use_sigv4: _env:AWS_USE_SIGV4
     boto_host: _env:AWS_HOST:linuxdev2.efi.internal
-    boto_port: _env:AWS_PORT:8080
+    boto_port: _env:AWS_PORT:80
     boto_calling_format: _env:AWS_CALLING_FORMAT:boto.s3.connection.OrdinaryCallingFormat
 
 cloudfronts3: &cloudfronts3
