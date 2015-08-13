@@ -20,6 +20,8 @@ RUN pip install /docker-registry/depends/docker-registry-core
 # Install registry
 RUN pip install file:///docker-registry#egg=docker-registry[bugsnag,newrelic,cors]
 
+RUN patch -p0 < /docker-registry/contrib/ssl.patch
+
 # Clean everything up
 # Image has to be "flattened" for this to have any real effect
 RUN apk del gcc swig python-dev

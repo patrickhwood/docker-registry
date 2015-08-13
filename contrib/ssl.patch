@@ -1,0 +1,49 @@
+--- /usr/lib/python2.7/site-packages/gevent/ssl.py
++++ /usr/lib/python2.7/site-packages/gevent/ssl.py
+@@ -66,7 +66,9 @@
+                  ssl_version=PROTOCOL_SSLv23, ca_certs=None,
+                  do_handshake_on_connect=True,
+                  suppress_ragged_eofs=True,
+-                 ciphers=None):
++                 ciphers=None,
++                 server_hostname=None,  # Required by python >= 2.7.8
++                 _context=None):  # Required by python >= 2.7.8
+         socket.__init__(self, _sock=sock)
+ 
+         if certfile and not keyfile:
+@@ -81,15 +83,27 @@
+             self._sslobj = None
+         else:
+             # yes, create the SSL object
+-            if ciphers is None:
+-                self._sslobj = _ssl.sslwrap(self._sock, server_side,
+-                                            keyfile, certfile,
+-                                            cert_reqs, ssl_version, ca_certs)
++            if hasattr(_ssl, 'sslwrap'):
++                if ciphers is None:
++                    self._sslobj = _ssl.sslwrap(self._sock, server_side,
++                                                keyfile, certfile,
++                                                cert_reqs, ssl_version, ca_certs)
++                else:
++                    self._sslobj = _ssl.sslwrap(self._sock, server_side,
++                                                keyfile, certfile,
++                                                cert_reqs, ssl_version, ca_certs,
++                                                ciphers)
+             else:
+-                self._sslobj = _ssl.sslwrap(self._sock, server_side,
+-                                            keyfile, certfile,
+-                                            cert_reqs, ssl_version, ca_certs,
+-                                            ciphers)
++                self.context = __ssl__.SSLContext(ssl_version)
++                self.context.verify_mode = cert_reqs
++                if ca_certs:
++                    self.context.load_verify_locations(ca_certs)
++                if certfile:
++                    self.context.load_cert_chain(certfile, keyfile)
++                if ciphers:
++                    self.context.set_ciphers(ciphers)
++                self._sslobj = self.context._wrap_socket(self._sock, server_side=server_side, ssl_sock=self)
++
+             if do_handshake_on_connect:
+                 self.do_handshake()
+         self.keyfile = keyfile
